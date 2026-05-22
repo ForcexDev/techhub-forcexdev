@@ -24,6 +24,12 @@ const HUB_DATA = {
       icon: "rocket",
       links: [
         {
+          url: "https://forcexdev.github.io/my-portfolio/",
+          title: "ForcexDev Portfolio",
+          description:
+            "Ezequiel Morales' professional portfolio. Focused on cybersecurity, secure development, systems infrastructure, and networks, featuring a stunning interactive cosmic theme.",
+        },
+        {
           url: "https://compendium-notes.vercel.app/",
           title: "Compendium Notes",
           description:
