@@ -1,96 +1,77 @@
 # 🦔 tech.hub // forcexdev ⚡️
 
-Un portal minimalista y responsivo de enlaces y recursos de tecnología con una estética retro inspirada en **Sega Genesis (Sonic the Hedgehog)** combinada con toques modernos de **Vercel**.
+A clean, responsive, and retro-inspired personal tech hub and link directory compiling all the useful pages, websites, and resources I find valuable as a developer. 
 
-## 🎨 Características Estéticas y Funcionales
-- **Paleta de Colores Curada**: Modos oscuro y claro sumamente cuidados que evocan los cielos de Green Hill Zone y el clásico azul de Sonic.
-- **Detalles Pixel Art**: GIFs clásicos de Sonic integrados dinámicamente y efectos retro de anillos dorados giratorios (*Golden Rings*) al pasar el cursor sobre las tarjetas.
-- **Fondo GHZ Dinámico**: Un patrón cuadriculado verde/azul retro que se desplaza suavemente en sintonía con la página.
-- **Barra de Navegación Pegajosa (Sticky Header)**: Navegación unificada con barra de búsqueda rápida para filtrar etapas (*stages*) y cambio de tema dinámico.
-- **Skeleton Loaders**: Efecto shimmer para las capturas de pantalla de los enlaces durante su carga inicial.
+The aesthetic is inspired by the classic **Sega Genesis (Sonic the Hedgehog)** era merged with modern, sleek **Vercel** design elements.
 
-## 🛠️ Stack Tecnológico
+## 🎨 Aesthetic & Features
+- **Curated Theme**: Highly polished Dark and Light modes mimicking the iconic Green Hill Zone palettes and Sonic's signature blue.
+- **Golden Rings Hover Effects**: Nostalgic retro gold rings that spin dynamically on card hovers.
+- **Responsive Grid**: Fluid layout displaying categorized links beautifully across mobile, tablet, and desktop devices.
+- **Instant Search**: Quick "Stage" search to filter resources in real time.
+- **Decorations**: Retro pixel art Sonic sprites integrated seamlessly throughout the page sections.
+
+## 🛠️ Stack
 - **Core**: React 19 + Vite 6
-- **Estilos**: Tailwind CSS v4 + Custom Vanilla CSS
-- **Iconos**: Lucide React
-- **Fuentes**: Google Fonts (Silkscreen & JetBrains Mono) + Geist Mono desde el CDN de Vercel
+- **Styling**: Tailwind CSS v4 + Custom Vanilla CSS
+- **Icons**: Lucide React
+- **Typography**: Google Fonts (Silkscreen & JetBrains Mono) + Geist Mono via Vercel CDN
 
 ---
 
-## 🚀 Desarrollo Local
+## 🚀 Local Development
 
-Sigue estos pasos para ejecutar el proyecto en tu entorno local:
+To run this project locally, execute the following commands in your terminal:
 
-1. **Instalar dependencias**:
+1. **Install dependencies**:
    ```bash
    npm install
    ```
 
-2. **Iniciar el servidor de desarrollo**:
+2. **Start the development server**:
    ```bash
    npm run dev
    ```
 
-3. **Compilar para producción** (para verificar que todo compila sin problemas):
+3. **Build for production**:
    ```bash
    npm run build
    ```
 
 > [!TIP]
-> **Nota para Windows (PowerShell):** Si experimentas problemas ejecutando comandos de Node debido a las políticas de ejecución de scripts, puedes usar CMD directamente o anteponer `cmd.exe /c` (por ejemplo: `cmd.exe /c npm run build`).
+> **Windows (PowerShell) Note:** If your execution policy restricts running node scripts, you can run CMD directly or prefix the commands with `cmd.exe /c` (e.g., `cmd.exe /c npm run build`).
 
 ---
 
-## 🐙 Cómo subirlo a GitHub
+## 🐙 Uploading to GitHub
 
-Para subir esta carpeta a un nuevo repositorio en tu cuenta de GitHub, ejecuta los siguientes comandos en tu terminal desde la raíz de este proyecto:
+If you make modifications or need to push the organized structure to your repository:
 
-1. **Asegúrate de que Git está inicializado** (este proyecto ya contiene una carpeta `.git`):
-   ```bash
-   git status
-   ```
-
-2. **Añade todos los archivos** al área de preparación (gracias al `.gitignore` configurado, carpetas pesadas como `node_modules` y archivos generados como `dist` no serán añadidos):
+1. **Stage all changes**:
    ```bash
    git add .
    ```
 
-3. **Haz tu primer commit**:
+2. **Commit changes**:
    ```bash
-   git commit -m "feat: initial commit - sonic techhub portal"
+   git commit -m "style: organize folder structure and update README"
    ```
 
-4. **Crea la rama principal (main)** si no estás en ella:
+3. **Push to GitHub**:
    ```bash
-   git branch -M main
-   ```
-
-5. **Vincula tu repositorio remoto** (crea un repositorio vacío en GitHub primero y copia su dirección URL):
-   ```bash
-   git remote add origin https://github.com/TU-USUARIO/TU-REPOSITORIO.git
-   ```
-
-6. **Sube tus archivos a GitHub**:
-   ```bash
-   git push -u origin main
+   git push
    ```
 
 ---
 
-## 📐 Cómo desplegar en Vercel
+## 📐 Deploying on Vercel
 
-Desplegar este proyecto en Vercel es sumamente sencillo ya que está optimizado y auto-detecta la configuración de Vite:
+This project is fully optimized for **Vercel** and will be auto-detected instantly:
 
-1. Ve a **[Vercel](https://vercel.com/)** e inicia sesión con tu cuenta de GitHub.
-2. Haz clic en **"Add New..."** y selecciona **"Project"**.
-3. Importa el repositorio de GitHub que acabas de subir (`techhub-forcexdev`).
-4. Vercel detectará automáticamente que es un proyecto de **Vite**.
-5. Deja los valores predeterminados (los cuales ya están optimizados):
+1. Log in to [Vercel](https://vercel.com/) and import your repository.
+2. Vercel automatically detects the **Vite** configuration.
+3. Keep the default, pre-configured settings:
    - **Framework Preset**: `Vite`
    - **Build Command**: `npm run build`
    - **Output Directory**: `dist`
-6. Haz clic en **"Deploy"** y ¡listo! En menos de un minuto tu portal de enlaces estará en línea.
-
----
-
-*Creado con 💍 y Esmeraldas del Caos por forcexdev.*
+4. Click **Deploy**, and your custom tech hub will be live in under a minute!
