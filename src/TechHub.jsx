@@ -10,6 +10,8 @@ import sonicContinue from './assets/sonic-continue.gif';
 import sonicJump from './assets/sonic-jump.gif';
 import sonicPush from './assets/sonic-push.gif';
 import sonicTunnel from './assets/sonic-tunnel.gif';
+import sonicRun from './assets/sonic-run.gif';
+import sonicWaiting from './assets/sonic-waiting.gif';
 import greenHillFg from './assets/green-hill-fg.png';
 
 // ═══════════════════════════════════════════════════════════════
@@ -24,16 +26,16 @@ const HUB_DATA = {
       icon: "rocket",
       links: [
         {
-          url: "https://forcexdev.github.io/my-portfolio/",
-          title: "ForcexDev Portfolio",
-          description:
-            "Ezequiel Morales' professional portfolio. Focused on cybersecurity, secure development, systems infrastructure, and networks, featuring a stunning interactive cosmic theme.",
-        },
-        {
           url: "https://compendium-notes.vercel.app/",
           title: "Compendium Notes",
           description:
             "A personal knowledge management system built with modern web technologies. Designed for capturing, organizing, and connecting notes across multiple domains — from dev documentation to daily reflections. Features markdown support, tagging, and fast search.",
+        },
+        {
+          url: "https://forcexdev.github.io/my-portfolio/",
+          title: "ForcexDev Portfolio",
+          description:
+            "Ezequiel Morales' professional portfolio. Focused on cybersecurity, secure development, systems infrastructure, and networks, featuring a stunning interactive cosmic theme.",
         },
       ],
     },
@@ -156,10 +158,12 @@ function CategoryIcon({ iconKey, size = 14, className = '' }) {
 // Cada sprite tiene: src, posición, y sección donde aparece
 const SONIC_SPRITES = [
   { src: sonicBalance, alt: 'Sonic Balance', section: 0, position: 'right' },
-  { src: sonicJump, alt: 'Sonic Jump', section: 2, position: 'left' },
-  { src: sonicPush, alt: 'Sonic Push', section: 4, position: 'right' },
-  { src: sonicTunnel, alt: 'Sonic Tunnel', section: 5, position: 'left' },
-  { src: sonicContinue, alt: 'Sonic Continue', section: 6, position: 'right' },
+  { src: sonicPush, alt: 'Sonic Push', section: 1, position: 'left' },
+  { src: sonicRun, alt: 'Sonic Run', section: 2, position: 'right' },
+  { src: sonicJump, alt: 'Sonic Jump', section: 3, position: 'left' },
+  { src: sonicTunnel, alt: 'Sonic Tunnel', section: 4, position: 'right' },
+  { src: sonicContinue, alt: 'Sonic Continue', section: 5, position: 'left' },
+  { src: sonicWaiting, alt: 'Sonic Waiting', section: 6, position: 'right' },
 ];
 
 // ═══════════════════════════════════════════════════════════════
@@ -186,6 +190,7 @@ function Ring({ spinning }) {
       className="absolute"
       style={{
         top: '-6px', right: '-6px',
+        zIndex: 20,
         animation: spinning ? 'ring-spin 0.5s linear forwards' : 'none',
       }}
     >
@@ -241,30 +246,269 @@ function StarSeparator() {
   );
 }
 
-// ─── Screenshot con skeleton shimmer y fallback ───
-function ScreenshotImage({ url, height = '220px' }) {
-  const [status, setStatus] = useState('loading'); // 'loading' | 'loaded' | 'error'
+// ─── Dominios conocidos que bloquean capturas headless y requieren tarjetas de marca premium ───
+const SCREENSHOT_BLOCKERS = [
+  'cloudflare.com',
+  'tryhackme.com',
+  'shodan.io',
+  'stitch.withgoogle.com',
+  'opengraph.xyz'
+];
+
+function getBrandCardStyle(domain) {
+  const d = domain.toLowerCase();
+  if (d.includes('tryhackme')) {
+    return {
+      themeColor: '#ff4d4d',
+      glowColor: 'rgba(255, 77, 77, 0.4)',
+      label: 'TRY.HACK.ME',
+      stage: 'STAGE THM'
+    };
+  }
+  if (d.includes('cloudflare')) {
+    return {
+      themeColor: '#f38020',
+      glowColor: 'rgba(243, 128, 32, 0.4)',
+      label: 'CLOUD.FLARE',
+      stage: 'STAGE CF'
+    };
+  }
+  if (d.includes('shodan')) {
+    return {
+      themeColor: '#00ff66',
+      glowColor: 'rgba(0, 255, 102, 0.4)',
+      label: 'SHODAN.IO',
+      stage: 'STAGE SH'
+    };
+  }
+  if (d.includes('stitch')) {
+    return {
+      themeColor: '#4285f4',
+      glowColor: 'rgba(66, 133, 244, 0.4)',
+      label: 'STITCH.GOOGLE',
+      stage: 'STAGE ST'
+    };
+  }
+  if (d.includes('opengraph')) {
+    return {
+      themeColor: '#a855f7',
+      glowColor: 'rgba(168, 85, 247, 0.4)',
+      label: 'OPENGRAPH.XYZ',
+      stage: 'STAGE OG'
+    };
+  }
+  return {
+    themeColor: 'var(--ring)',
+    glowColor: 'rgba(248, 192, 0, 0.4)',
+    label: domain.toUpperCase(),
+    stage: 'STAGE 01'
+  };
+}
+
+function ScreenshotImage({ url, customImage, isProject = false, height = '220px' }) {
   const domain = getDomain(url);
 
-  if (status === 'error') {
+  // Detectar si el dominio tiende a bloquear capturas headless (Cloudflare, etc.)
+  const isBlocker = useMemo(() => {
+    return SCREENSHOT_BLOCKERS.some(d => domain.toLowerCase().includes(d));
+  }, [domain]);
+
+  // Si es un blocker conocido y no hay una imagen personalizada, mostramos la tarjeta de marca directamente
+  const shouldRenderBrandCardDirectly = isBlocker && !customImage;
+
+  // Decidir la estrategia inicial
+  const [imageType, setImageType] = useState(() => {
+    if (customImage) return 'custom';
+    if (isBlocker) return 'brand-card'; // Evitamos consultas innecesarias a la API para blockers
+    return 'screenshot';
+  });
+
+  const [status, setStatus] = useState(() => {
+    if (shouldRenderBrandCardDirectly) return 'brand-card';
+    return 'loading';
+  });
+
+  // Determinar la URL correspondiente
+  const imgSrc = useMemo(() => {
+    if (imageType === 'custom') return customImage;
+    if (imageType === 'og') {
+      return `https://api.microlink.io/?url=${encodeURIComponent(url)}&embed=image.url`;
+    }
+    return `https://api.microlink.io/?url=${encodeURIComponent(url)}&screenshot=true&embed=screenshot.url&meta=false`;
+  }, [imageType, url, customImage]);
+
+  // Manejar el fallback si falla la carga de la imagen
+  const handleError = () => {
+    if (imageType === 'screenshot') {
+      // Si falló el screenshot headless, intentamos traer la imagen de OpenGraph
+      setImageType('og');
+      setStatus('loading');
+    } else {
+      // Si falló también el OpenGraph o la personalizada, activamos el estado de BrandCard de fallback
+      setStatus('brand-card');
+    }
+  };
+
+  // Renderizador de Tarjeta de Marca (BrandCard) premium
+  if (status === 'brand-card' || shouldRenderBrandCardDirectly) {
+    const brand = getBrandCardStyle(domain);
     return (
       <div
-        className="flex items-center justify-center w-full"
+        className="flex flex-col items-center justify-between w-full relative overflow-hidden"
         style={{
-          backgroundColor: 'var(--bg)', height,
-          fontFamily: FONT_MONO, fontSize: '13px',
-          color: 'var(--muted)',
-          borderBottom: '1px solid var(--border)',
+          background: 'linear-gradient(180deg, #09090b 0%, #151518 100%)',
+          height,
+          borderBottom: '2px solid var(--border)',
+          padding: '14px 12px 10px 12px',
+          boxSizing: 'border-box'
         }}
       >
-        {domain}
+        {/* Retro CRT grid / checkered background pattern */}
+        <div
+          className="absolute inset-0 opacity-15 pointer-events-none"
+          style={{
+            backgroundImage: `
+              linear-gradient(45deg, #000 25%, transparent 25%), 
+              linear-gradient(-45deg, #000 25%, transparent 25%), 
+              linear-gradient(45deg, transparent 75%, #000 75%), 
+              linear-gradient(-45deg, transparent 75%, #000 75%)
+            `,
+            backgroundSize: '16px 16px',
+            backgroundPosition: '0 0, 0 8px, 8px -8px, -8px 0px',
+          }}
+        />
+
+        {/* CRT Scanline Overlay */}
+        <div
+          className="absolute inset-0 pointer-events-none opacity-25"
+          style={{
+            backgroundImage: 'repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8) 1px, transparent 1px, transparent 3px)',
+          }}
+        />
+
+        {/* CRT Glass Reflection / Glare */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: 'radial-gradient(circle at 50% 10%, rgba(255, 255, 255, 0.08) 0%, transparent 60%)',
+          }}
+        />
+
+        {/* Header HUD: CLASSIC SEGA HUD STYLE */}
+        <div className="w-full flex justify-between items-center z-10 px-1" style={{ fontFamily: FONT_PIXEL, fontSize: '9px' }}>
+          <div className="flex items-center">
+            {isProject ? (
+              <div style={{ width: '76px', display: 'inline-block' }} />
+            ) : (
+              <>
+                <span style={{ color: 'var(--shoe)', marginRight: '4px' }}>ZONE:</span>
+                <img
+                  src={`https://logo.clearbit.com/${domain}?size=32`}
+                  alt=""
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                  }}
+                  style={{
+                    width: '12px',
+                    height: '12px',
+                    borderRadius: '1px',
+                    objectFit: 'contain',
+                    marginRight: '4px',
+                    display: 'inline-block'
+                  }}
+                />
+                <span style={{ color: '#fff' }}>RETRO</span>
+              </>
+            )}
+          </div>
+          <div>
+            <span style={{ color: 'var(--shoe)', marginRight: '3px' }}>ACT:</span>
+            <span style={{ color: 'var(--ring)' }}>1</span>
+          </div>
+        </div>
+
+        {/* Center: Sonic Continue GIF */}
+        <div className="relative flex items-center justify-center z-10 my-auto" style={{ transform: 'translateY(6px)' }}>
+          {/* Subtle glowing halo behind Sonic */}
+          <div
+            className="absolute rounded-full"
+            style={{
+              width: '80px',
+              height: '80px',
+              backgroundColor: brand.glowColor,
+              filter: 'blur(20px)',
+              opacity: 0.6,
+              zIndex: -1
+            }}
+          />
+
+          <img
+            src={sonicContinue}
+            alt="Sonic Continue"
+            style={{
+              width: '54px',
+              height: 'auto',
+              imageRendering: 'pixelated',
+              filter: `drop-shadow(0 0 6px ${brand.glowColor})`
+            }}
+          />
+
+          {/* Retro Diagnostic Text */}
+          <div
+            style={{
+              position: 'absolute',
+              bottom: '-22px',
+              fontFamily: FONT_PIXEL,
+              fontSize: '7px',
+              color: 'var(--muted)',
+              opacity: 0.7,
+              letterSpacing: '0.5px',
+              whiteSpace: 'nowrap'
+            }}
+          >
+            [ PREVIEW UNAVAILABLE ]
+          </div>
+        </div>
+
+        {/* Footer HUD elements */}
+        <div className="w-full z-10 mt-auto flex flex-col items-center">
+          {/* Label Title in Yellow/Brand Neon */}
+          <div
+            style={{
+              fontFamily: FONT_PIXEL,
+              fontSize: '11px',
+              color: brand.themeColor,
+              textShadow: `0 0 8px ${brand.glowColor}`,
+              letterSpacing: '1px',
+              marginBottom: '4px'
+            }}
+          >
+            {brand.label}
+          </div>
+
+          {/* Retro Sega HUD layout values */}
+          <div className="flex gap-5 justify-center items-center w-full px-2" style={{ fontFamily: FONT_PIXEL, fontSize: '8px', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '4px' }}>
+            <div>
+              <span style={{ color: 'var(--shoe)', marginRight: '3px' }}>STAGE:</span>
+              <span style={{ color: '#fff' }}>OK</span>
+            </div>
+            <div>
+              <span style={{ color: 'var(--shoe)', marginRight: '3px' }}>RINGS:</span>
+              <span style={{ color: 'var(--ring)' }}>99</span>
+            </div>
+            <div>
+              <span style={{ color: 'var(--shoe)', marginRight: '3px' }}>SCORE:</span>
+              <span style={{ color: '#00ff66' }}>100%</span>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="relative w-full" style={{ height }}>
-      {/* Skeleton shimmer visible mientras carga */}
+    <div className="relative w-full" style={{ height, overflow: 'hidden' }}>
+      {/* Shimmer de carga */}
       {status === 'loading' && (
         <div
           className="skeleton-shimmer absolute inset-0"
@@ -272,11 +516,11 @@ function ScreenshotImage({ url, height = '220px' }) {
         />
       )}
       <img
-        src={getScreenshotUrl(url)}
-        alt={`Screenshot ${domain}`}
+        src={imgSrc}
+        alt={`Screenshot/Preview ${domain}`}
         loading="lazy"
         onLoad={() => setStatus('loaded')}
-        onError={() => setStatus('error')}
+        onError={handleError}
         className="w-full h-full"
         style={{
           objectFit: 'cover',
@@ -329,7 +573,7 @@ function ProjectCard({ link }) {
         MY BUILD
       </div>
 
-      <ScreenshotImage url={link.url} height="220px" />
+      <ScreenshotImage url={link.url} customImage={link.customImage} isProject={true} height="220px" />
       <div style={{ padding: '14px' }}>
         <h3 style={{ fontFamily: FONT_PIXEL, fontSize: '14px', color: 'var(--text)', marginBottom: '6px' }}>
           {link.title}
@@ -369,7 +613,7 @@ function LinkCard({ link }) {
       onMouseLeave={() => setHovered(false)}
     >
       <Ring spinning={hovered} />
-      <ScreenshotImage url={link.url} height="220px" />
+      <ScreenshotImage url={link.url} customImage={link.customImage} height="220px" />
       <div style={{ padding: '14px' }}>
         <h3 style={{ fontFamily: FONT_PIXEL, fontSize: '13px', color: 'var(--text)', marginBottom: '6px' }}>
           {link.title}
