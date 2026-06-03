@@ -81,6 +81,7 @@ const HUB_DATA = {
         { url: "https://upstash.com/", title: "Upstash", description: "Serverless, low-latency Redis, Kafka, and QStash hosting" },
         { url: "https://firebase.google.com/", title: "Firebase", description: "Google app development platform and BaaS" },
         { url: "https://vercel.com/", title: "Vercel", description: "Frontend deployment and serverless platform" },
+        { url: "https://render.com/", title: "Render", description: "Cloud application hosting platform for APIs, databases, and static sites" },
         { url: "https://dash.cloudflare.com/", title: "Cloudflare", description: "CDN, DNS and edge computing dashboard" },
         { url: "https://resend.com/", title: "Resend", description: "Developer-first transactional email API service" },
         { url: "https://dashboard.emailjs.com/", title: "EmailJS", description: "Client-side email sending service dashboard" },
