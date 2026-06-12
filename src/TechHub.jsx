@@ -95,6 +95,9 @@ const HUB_DATA = {
         { url: "https://www.hackthebox.com/", title: "Hack The Box", description: "Offensive security labs and CTF challenges" },
         { url: "https://overthewire.org/wargames/", title: "OverTheWire", description: "Linux and security wargame shell challenges" },
         { url: "https://www.shodan.io/", title: "Shodan", description: "Internet-connected device search engine" },
+        { url: "https://webmii.com/", title: "WebMii", description: "People search engine and public information aggregator" },
+        { url: "https://osintframework.com/", title: "OSINT Framework", description: "Directory of open source intelligence gathering tools" },
+        { url: "https://www.maltego.com/", title: "Maltego", description: "Open source intelligence and graphical link analysis tool" },
       ],
     },
     {
