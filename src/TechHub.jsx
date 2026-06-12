@@ -52,6 +52,8 @@ const HUB_DATA = {
         { url: "https://www.footer.design/", title: "Footer Design", description: "Footer layout patterns and design reference" },
         { url: "https://bentogrids.com/", title: "Bento Grids", description: "Bento grid layout templates and inspiration" },
         { url: "https://htmlrev.com/", title: "HTMLrev", description: "Free HTML templates and component library" },
+        { url: "https://godly.website/", title: "Godly", description: "Astronomically good web design inspiration from the best websites" },
+        { url: "https://dribbble.com/", title: "Dribbble", description: "Self-promotion and social networking platform for digital designers and creatives" },
       ],
     },
     {
