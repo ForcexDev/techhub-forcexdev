@@ -54,6 +54,7 @@ const HUB_DATA = {
         { url: "https://htmlrev.com/", title: "HTMLrev", description: "Free HTML templates and component library" },
         { url: "https://godly.website/", title: "Godly", description: "Astronomically good web design inspiration from the best websites" },
         { url: "https://dribbble.com/", title: "Dribbble", description: "Self-promotion and social networking platform for digital designers and creatives" },
+        { url: "https://fontpair.co/", title: "FontPair", description: "Free Google Font pairings and combinations to help you find the perfect font combinations" },
       ],
     },
     {
