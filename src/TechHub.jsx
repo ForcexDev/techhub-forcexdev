@@ -26,6 +26,12 @@ const HUB_DATA = {
       icon: "rocket",
       links: [
         {
+          url: "https://pharmalogic.cl/",
+          title: "PharmaLogic",
+          description:
+            "PharmaLogic - Sistema de Gestión de Droguería (Pharmacy Management System).",
+        },
+        {
           url: "https://compendium-notes.vercel.app/",
           title: "Compendium Notes",
           description:
