@@ -1,8 +1,9 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import {
-  Rocket, Palette, BrainCircuit, Server,
-  ShieldCheck, GraduationCap, Terminal, Search, Sun, Moon
-} from 'lucide-react';
+  Rocket, Palette, Cpu as BrainCircuit, Server,
+  ShieldCheck, GraduationCap, TerminalSquare as Terminal, Search, Sun, Moon
+} from 'reicon-react';
+import gsap from 'gsap';
 
 // ─── Importar assets (Vite los resuelve como URLs) ───
 import sonicBalance from './assets/sonic-balance.gif';
@@ -561,7 +562,7 @@ function ProjectCard({ link }) {
       target="_blank"
       rel="noopener noreferrer"
       id={`project-${domain}`}
-      className="block relative card-interactive"
+      className="block relative card-interactive gsap-card"
       style={{
         backgroundColor: 'var(--card)',
         border: '1px solid',
@@ -617,7 +618,7 @@ function LinkCard({ link }) {
       target="_blank"
       rel="noopener noreferrer"
       id={`card-${domain}`}
-      className="block relative card-interactive"
+      className="block relative card-interactive gsap-card"
       style={{
         backgroundColor: 'var(--card)',
         border: '1px solid',
@@ -757,6 +758,21 @@ export default function TechHub() {
     }
     return 'dark';
   });
+
+  const mainRef = useRef(null);
+
+  // ─── GSAP Stagger Animation for Cards ───
+  useEffect(() => {
+    if (!mainRef.current) return;
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        '.gsap-card',
+        { opacity: 0, y: 30, scale: 0.95 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.4, stagger: 0.05, ease: 'back.out(1.2)' }
+      );
+    }, mainRef);
+    return () => ctx.revert();
+  }, [search]);
 
   // ─── Control de Light/Dark Mode ───
   useEffect(() => {
@@ -898,7 +914,7 @@ export default function TechHub() {
       <GreenHillStrip />
 
       {/* ─── Contenido ─── */}
-      <main className="max-w-7xl mx-auto px-4 py-8">
+      <main ref={mainRef} className="max-w-7xl mx-auto px-4 py-8">
         {filteredCategories.map((category, index) => (
           <div key={category.name}>
             <CategorySection
